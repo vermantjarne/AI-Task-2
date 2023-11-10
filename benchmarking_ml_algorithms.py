@@ -44,7 +44,7 @@ models = {
 }
 
 # Loop through all models
-for model_name, model in models:
+for model_name, model in models.items():
 
     # Fit train data into model
     model.fit(X_train_encoded, np.ravel(y_train))
