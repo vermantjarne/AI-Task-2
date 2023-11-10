@@ -13,8 +13,8 @@ import streamlit as st
 st.title("Task 2 - Benchmarking ML Algorithms")
 
 # Initiate Streamlit variables
-#if "decision_tree_max_depth" not in st.session_state:
-#    st.session_state.decision_trees_max_depth = 10
+if "decision_tree_max_depth" not in st.session_state:
+    st.session_state.decision_trees_max_depth = 10
 
 # Fetch dataset
 dataset_car_evaluation = fetch_ucirepo(id=19)
@@ -41,8 +41,7 @@ X_train_encoded = pd.get_dummies(X_train)
 X_test_encoded = pd.get_dummies(X_test)
 
 # Create sliders for model variables
-if "decision_trees_max_depth" not in st.session_state:
-    st.session_state.decision_trees_max_depth = st.slider('Select max_depth for Decision Tree algorithm', 1, 20, 10)
+st.session_state.decision_trees_max_depth = st.slider('Select max_depth for Decision Tree algorithm', 1, 20, 10)
 
 # Define main function
 def main():
