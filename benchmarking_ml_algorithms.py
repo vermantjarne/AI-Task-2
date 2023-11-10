@@ -12,6 +12,10 @@ import streamlit as st
 # Write title and description
 st.title("Task 2 - Benchmarking ML Algorithms")
 
+# Initiate Streamlit variables
+if "decision_tree_max_depth" not in st.session_state:
+    st.session_state.decision_trees_max_depth = 10
+
 # Fetch dataset
 dataset_car_evaluation = fetch_ucirepo(id=19)
 
@@ -38,22 +42,33 @@ X_test_encoded = pd.get_dummies(X_test)
 
 # Initiate different models for different algorithms
 models = {
-    "Decision Tree": DecisionTreeClassifier(),
+    "Decision Tree": DecisionTreeClassifier(max_depth=st.session_state.decision_trees_max_depth),
     "Logistic Regression": LogisticRegression(),
     "Support Vector Machine": SVC()
 }
 
-# Loop through all models
-for model_name, model in models.items():
+# Define main function
+def main():
 
-    # Fit train data into model
-    model.fit(X_train_encoded, np.ravel(y_train))
+    # Create sliders for model variables
+    st.session_state.decision_trees_max_depth = st.slider('Select max_depth for Decision Tree algorithm', 1, 20, 10)
 
-    # Create predictions for model based on test data
-    predictions = model.predict(X_test_encoded)
+    # Loop through all models
+    for model_name, model in models.items():
 
-    # Determine accuracy for predictions based on test data
-    accuracy = accuracy_score(y_test, predictions)
+        # Fit train data into model
+        model.fit(X_train_encoded, np.ravel(y_train))
 
-    # Write accuracy to streamlit application
-    st.write(f"The accuracy for the {model_name} model is {np.round(accuracy * 100, 2)}")
+        # Create predictions for model based on test data
+        predictions = model.predict(X_test_encoded)
+
+        # Determine accuracy for predictions based on test data
+        accuracy = accuracy_score(y_test, predictions)
+
+        # Write accuracy to streamlit application
+        st.write(f"The accuracy for the {model_name} model is {np.round(accuracy * 100, 2)}")
+
+    # Add rerun button
+    st.button("Rerun", on_click=main())
+
+main()
