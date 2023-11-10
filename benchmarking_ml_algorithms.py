@@ -69,6 +69,5 @@ def main():
         # Write accuracy to streamlit application
         st.write(f"The accuracy for the {model_name} model is {np.round(accuracy * 100, 2)}")
 
-# Add rerun button
-if st.button("Rerun", on_click=main):
-    main()
+# Run main
+main()
