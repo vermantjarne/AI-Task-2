@@ -13,8 +13,8 @@ import streamlit as st
 st.title("Task 2 - Benchmarking ML Algorithms")
 
 # Initiate Streamlit variables
-if "decision_tree_max_depth" not in st.session_state:
-    st.session_state.decision_trees_max_depth = 10
+#if "decision_tree_max_depth" not in st.session_state:
+#    st.session_state.decision_trees_max_depth = 10
 
 # Fetch dataset
 dataset_car_evaluation = fetch_ucirepo(id=19)
@@ -40,18 +40,19 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 X_train_encoded = pd.get_dummies(X_train)
 X_test_encoded = pd.get_dummies(X_test)
 
-# Initiate different models for different algorithms
-models = {
-    "Decision Tree": DecisionTreeClassifier(max_depth=st.session_state.decision_trees_max_depth),
-    "Logistic Regression": LogisticRegression(),
-    "Support Vector Machine": SVC()
-}
-
 # Define main function
 def main():
 
     # Create sliders for model variables
-    st.session_state.decision_trees_max_depth = st.slider('Select max_depth for Decision Tree algorithm', 1, 20, 10)
+    if "decision_trees_max_depth" not in st.session_state:
+        st.session_state.decision_trees_max_depth = st.slider('Select max_depth for Decision Tree algorithm', 1, 20, 10)
+
+    # Initiate different models for different algorithms
+    models = {
+        "Decision Tree": DecisionTreeClassifier(max_depth=st.session_state.decision_trees_max_depth),
+        "Logistic Regression": LogisticRegression(),
+        "Support Vector Machine": SVC()
+    }
 
     # Loop through all models
     for model_name, model in models.items():
@@ -69,6 +70,7 @@ def main():
         st.write(f"The accuracy for the {model_name} model is {np.round(accuracy * 100, 2)}")
 
     # Add rerun button
-    st.button("Rerun", on_click=main())
+    st.button("Rerun", on_click=main)
+
 
 main()
