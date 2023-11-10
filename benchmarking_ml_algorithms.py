@@ -12,10 +12,6 @@ import streamlit as st
 # Write title and description
 st.title("Task 2 - Benchmarking ML Algorithms")
 
-# Store initial variable values in session state
-if "selection" not in st.session_state:
-    st.session_state.selection = "Decision Trees"
-
 # Fetch dataset
 dataset_car_evaluation = fetch_ucirepo(id=19)
 
@@ -24,16 +20,12 @@ X = dataset_car_evaluation.data.features
 y = dataset_car_evaluation.data.targets
 
 # Print data analysis
-st.write(f"For this example, we are using the [Car Evaluation dataset](https://archive.ics.uci.edu/dataset/19/car+evaluation)")
-st.write()
-st.write(f"The dataset has {str(len(X.columns))} features and {str(len(X))} instances")
-st.write()
+st.write(f"For this example, we are using the [Car Evaluation dataset](https://archive.ics.uci.edu/dataset/19/car+evaluation).")
+st.write(f"The dataset has {str(len(X.columns))} features and {str(len(X))} instances.")
 st.write("The dataset has the following first 5 rows:")
 st.write(X.head())
-st.write()
 st.write("The dataset has the following specifications:")
 st.write(X.describe())
-st.write()
 st.write("The dataset has the following empty values:")
 st.write(X.isnull().sum())
 
@@ -44,32 +36,24 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 X_train_encoded = pd.get_dummies(X_train)
 X_test_encoded = pd.get_dummies(X_test)
 
-# Create model depending on the chosen algorithm and fit data into model
-if st.session_state.selection == "Decision Trees":
-    model = DecisionTreeClassifier()
-    model.fit(X_train_encoded, y_train)
-elif st.session_state.selection == "Logistic Regression":
-    model = LogisticRegression()
+# Initiate different models for different algorithms
+models = {
+    "Decision Tree": DecisionTreeClassifier(),
+    "Logistic Regression": LogisticRegression(),
+    "Support Vector Machine": SVC()
+}
+
+# Loop through all models
+for model_name, model in models:
+
+    # Fit train data into model
     model.fit(X_train_encoded, np.ravel(y_train))
-else:
-    model = SVC()
-    model.fit(X_train_encoded, np.ravel(y_train))
 
-# Fit train data into model
-#model.fit(X_train_encoded, np.ravel(y_train))
+    # Create predictions for model based on test data
+    predictions = model.predict(X_test_encoded)
 
-# Create predictions for model based on test data
-predictions = model.predict(X_test_encoded)
+    # Determine accuracy for predictions based on test data
+    accuracy = accuracy_score(y_test, predictions)
 
-# Determine accuracy for predictions based on test data
-accuracy = accuracy_score(y_test, predictions)
-
-# Request user input for choosing 
-st.radio(
-    "Select machine learning algorithm",
-    ["Decision Trees", "Logistic Regression", "Support Vector Machine"],
-    key="selection"
-)
-
-# Write accuracy to streamlit application
-st.write(f"The accuracy for the {st.session_state.selection} model is {np.round(accuracy * 100, 2)}")
+    # Write accuracy to streamlit application
+    st.write(f"The accuracy for the {model_name} model is {np.round(accuracy * 100, 2)}")
